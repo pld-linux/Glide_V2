@@ -75,12 +75,11 @@ install swlibs/bin/texus $RPM_BUILD_ROOT%{_bindir}
 ######################################################################
 # Make two copies so that the old test3Dfx is still there and
 # we now have a consisten testGlide2x, testGlide3x
-install -m 755 glide2x/cvg/glide/tests/test00 \
+install glide2x/cvg/glide/tests/test00 \
 	$RPM_BUILD_ROOT%{_bindir}/test3Dfx
-install -m 755 glide2x/cvg/glide/tests/test00 \
+install glide2x/cvg/glide/tests/test00 \
 	$RPM_BUILD_ROOT%{_bindir}/testGlide2x
-
-install -m 755 glide3x/cvg/glide3/tests/test00 \
+install glide3x/cvg/glide3/tests/test00 \
 	$RPM_BUILD_ROOT%{_bindir}/testGlide3x
 
 gzip -9nf glide2x/glide_license.txt
