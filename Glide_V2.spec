@@ -82,17 +82,15 @@ install glide2x/cvg/glide/tests/test00 \
 install glide3x/cvg/glide3/tests/test00 \
 	$RPM_BUILD_ROOT%{_bindir}/testGlide3x
 
-gzip -9nf glide2x/glide_license.txt
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post -p /sbin/ldconfig
+%post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
-%doc glide2x/glide_license.txt.gz
+%doc glide2x/glide_license.txt
 %attr(755,root,root) %{_bindir}/texus
 %attr(755,root,root) %{_bindir}/test3Dfx
 %attr(755,root,root) %{_bindir}/testGlide3x
