@@ -8,7 +8,7 @@ Group(de):	Libraries
 Group(es):	Bibliotecas
 Group(fr):	Librairies
 Group(pl):	Biblioteki
-Copyright:	3DFX GLIDE Source Code General Public License
+License:	GPL
 Vendor:		3Dfx Interactive Inc.
 URL:		http://www.3dfx.com	
 Source0:	GlideV2.tar.gz
