@@ -6,7 +6,7 @@ Release:	7
 Group:		Libraries
 License:	GPL
 Vendor:		3Dfx Interactive Inc.
-URL:		http://www.3dfx.com	
+URL:		http://www.3dfx.com/
 Source0:	GlideV2.tar.gz
 Icon:		3dfx.gif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
