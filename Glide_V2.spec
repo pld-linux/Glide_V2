@@ -23,7 +23,7 @@ chmod +x swlibs/include/make/ostype
 %build
 # Make sure we build for Voodoo2
 export FX_GLIDE_HW=cvg
-make V2 CNODEBUG="$RPM_OPT_FLAGS -fomit-frame-pointer -funroll-loops \
+%{__make} V2 CNODEBUG="$RPM_OPT_FLAGS -fomit-frame-pointer -funroll-loops \
 	-fexpensive-optimizations -ffast-math -DBIG_OPT"
 
 %install
