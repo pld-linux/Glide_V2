@@ -4,13 +4,6 @@ Name:		Glide_V2
 Version:	2.53
 Release:	7
 Group:		Libraries
-Group(de):	Libraries
-Group(es):	Bibliotecas
-Group(fr):	Librairies
-Group(pl):	Biblioteki
-Group(pt_BR):	Bibliotecas
-Group(ru):	Библиотеки
-Group(uk):	Б╕бл╕отеки
 License:	GPL
 Vendor:		3Dfx Interactive Inc.
 URL:		http://www.3dfx.com	
