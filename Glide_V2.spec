@@ -21,7 +21,7 @@ under Linux.
 
 %description -l pl
 Ta biblioteka pozwala u¿ywaæ kart 3dfx Interactive Voodoo2 pod
-Linuxem.
+Linuksem.
 
 %prep
 %setup -q -n GlideV2
