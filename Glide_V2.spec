@@ -2,7 +2,7 @@ Summary:	Glide runtime for 3Dfx Voodoo2 boards
 Summary(pl):	Biblioteki Glide do kart 3Dfx Voodoo2 
 Name:		Glide_V2
 Version:	2.53
-Release:	6
+Release:	7
 Group:		Libraries
 Group(de):	Libraries
 Group(es):	Bibliotecas
