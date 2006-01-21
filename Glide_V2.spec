@@ -8,7 +8,6 @@ License:	GPL
 Vendor:		3Dfx Interactive Inc.
 Source0:	GlideV2.tar.gz
 # Source0-md5:	a7110232c3d4d888580aaff7919017d2
-Icon:		3dfx.gif
 URL:		http://www.3dfx.com/
 %ifarch %{ix86}
 BuildRequires:	/usr/bin/gasp
