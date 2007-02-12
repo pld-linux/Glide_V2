@@ -1,5 +1,5 @@
 Summary:	Glide runtime for 3Dfx Voodoo2 boards
-Summary(pl):	Biblioteki Glide do kart 3Dfx Voodoo2
+Summary(pl.UTF-8):   Biblioteki Glide do kart 3Dfx Voodoo2
 Name:		Glide_V2
 Version:	2.53
 Release:	7
@@ -18,8 +18,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 This library allows the user to use a 3dfx Interactive Voodoo2 card
 under Linux.
 
-%description -l pl
-Ta biblioteka pozwala u¿ywaæ kart 3dfx Interactive Voodoo2 pod
+%description -l pl.UTF-8
+Ta biblioteka pozwala uÅ¼ywaÄ‡ kart 3dfx Interactive Voodoo2 pod
 Linuksem.
 
 %prep
