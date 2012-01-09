@@ -1,0 +1,63 @@
+--- GlideV2/glide2x/cvg/glide/src/xdraw2.S.orig	2000-04-20 23:26:36.000000000 +0200
++++ GlideV2/glide2x/cvg/glide/src/xdraw2.S	2012-01-08 18:34:13.720380228 +0100
+@@ -128,18 +128,32 @@
+ 
+ .text
+ 
++.MACRO GR_FIFO_WRITE __addr __offset __data	
++    mov    \__data, \__offset(\__addr)
++.ENDM # GR_FIFO_WRITE
++
+ 	.align 4
+ 	.globl  _trisetup_cull
+ 	.type _trisetup_cull, @function
+ _trisetup_cull:	
+ #        .code
+ 
++EMITNOCULL	.ASSIGNA	0
++
+ .MACRO	SYMNAME prefix
++.AIF \&EMITNOCULL EQ 0
+ 	.LCULL\prefix:	
++.AELSE
++	.LNOCULL\prefix:
++.AENDI
+ .ENDM
+ 
+ .MACRO	SYMNAMEOP op prefix
++.AIF \&EMITNOCULL EQ 0
+ 	\op .LCULL\prefix
++.AELSE
++	\op .LNOCULL\prefix
++.AENDI
+ .ENDM
+ 				
+ GLIDE_CULLING       .ASSIGNA 1
+@@ -154,13 +168,7 @@
+ .L_end_trisetup_cull:
+ 	.size _trisetup_cull,.L_end_trisetup_cull-_trisetup_cull
+ 
+-.MACRO	SYMNAME prefix
+-	.LNOCULL\prefix:	
+-.ENDM
+-
+-.MACRO	SYMNAMEOP op prefix
+-	\op .LNOCULL\prefix
+-.ENDM
++EMITNOCULL	.ASSIGNA	1
+ .AIF \&GLIDE_PACKED_RGB EQ 1
+ 	.align 4
+         .globl  _trisetup_cull_rgb
+--- GlideV2/glide2x/cvg/glide/src/xdraw2.inc.S.orig	2000-04-20 23:26:36.000000000 +0200
++++ GlideV2/glide2x/cvg/glide/src/xdraw2.inc.S	2012-01-08 18:33:24.560378579 +0100
+@@ -155,10 +155,6 @@
+ packCol .REG	    (%edi)
+ tempVal .REG	    (%edi)
+ 
+-.MACRO GR_FIFO_WRITE __addr __offset __data	
+-    mov    \__data, \__offset(\__addr)
+-.ENDM # GR_FIFO_WRITE
+-
+ .align 4
+  SYMNAME __triBegin
+     mov     fifoPtr(gc), fifo		# Fetch Fifo Ptr

@@ -4,11 +4,14 @@ Name:		Glide_V2
 Version:	2.53
 Release:	7
 Group:		Libraries
-License:	GPL
-Vendor:		3Dfx Interactive Inc.
+License:	3DFX GLIDE Source Code General Public License
 Source0:	GlideV2.tar.gz
 # Source0-md5:	a7110232c3d4d888580aaff7919017d2
-URL:		http://www.3dfx.com/
+Patch0:		glide-gcc4.patch
+Patch1:		glide-gasp.patch
+Patch2:		glide-cpp.patch
+Patch3:		glide-link.patch
+URL:		http://glide.sourceforge.net/
 %ifarch %{ix86}
 BuildRequires:	/usr/bin/gasp
 %endif
@@ -24,13 +27,23 @@ Linuksem.
 
 %prep
 %setup -q -n GlideV2
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
 chmod +x swlibs/include/make/ostype
+%{__rm} glide3x/cvg/init/*.{o,a}
+
+ln glide2x/README README.glide2x
+ln glide3x/README README.glide3x
 
 %build
 # Make sure we build for Voodoo2
 export FX_GLIDE_HW=cvg
-%{__make} V2 CNODEBUG="%{rpmcflags} %{!?debug:-fomit-frame-pointer -funroll-loops} \
-	%{!?debug:-fexpensive-optimizations -ffast-math -DBIG_OPT}"
+%{__make} V2 \
+	CC="%{__cc}" \
+	CNODEBUG="%{rpmcflags} %{!?debug:-fomit-frame-pointer -funroll-loops} \
+		%{!?debug:-fexpensive-optimizations -ffast-math -DBIG_OPT}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -67,7 +80,7 @@ ln -sf libglide3x.so.3 $RPM_BUILD_ROOT%{_libdir}/libglide3x.so
 # Install Texus
 ######################################################################
 install -m 755 glide2x/swlibs/lib/libtexus.so.1.1 \
-    $RPM_BUILD_ROOT%{_libdir}
+	$RPM_BUILD_ROOT%{_libdir}
 
 ln -sf libtexus.so.1 $RPM_BUILD_ROOT%{_libdir}/libtexus.so
 
@@ -85,6 +98,8 @@ install glide2x/cvg/glide/tests/test00 \
 install glide3x/cvg/glide3/tests/test00 \
 	$RPM_BUILD_ROOT%{_bindir}/testGlide3x
 
+/sbin/ldconfig -n $RPM_BUILD_ROOT%{_libdir}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -93,18 +108,21 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc glide2x/glide_license.txt
+%doc README.glide2x README.glide3x glide_license.txt
 %attr(755,root,root) %{_bindir}/texus
 %attr(755,root,root) %{_bindir}/test3Dfx
 %attr(755,root,root) %{_bindir}/testGlide3x
 %attr(755,root,root) %{_bindir}/testGlide2x
 %attr(755,root,root) %{_libdir}/libglide.so.2.53
+%attr(755,root,root) %ghost %{_libdir}/libglide.so.2
 %attr(755,root,root) %{_libdir}/libglide.so
 %attr(755,root,root) %{_libdir}/libglide2x.so
 %attr(755,root,root) %{_libdir}/libglide2x.so.2
 %attr(755,root,root) %{_libdir}/libglide3.so.3.01
+%attr(755,root,root) %ghost %{_libdir}/libglide3.so.3
 %attr(755,root,root) %{_libdir}/libglide3.so
 %attr(755,root,root) %{_libdir}/libglide3x.so
 %attr(755,root,root) %{_libdir}/libglide3x.so.3
 %attr(755,root,root) %{_libdir}/libtexus.so.1.1
+%attr(755,root,root) %ghost %{_libdir}/libtexus.so.1
 %attr(755,root,root) %{_libdir}/libtexus.so

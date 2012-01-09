@@ -1,0 +1,10 @@
+--- GlideV2/glide2x/cvg/glide/src/makefile.linux.orig	2000-04-20 23:26:36.000000000 +0200
++++ GlideV2/glide2x/cvg/glide/src/makefile.linux	2012-01-09 17:58:16.809867662 +0100
+@@ -205,6 +205,7 @@
+ SHARED_LIBRARY  =	libglide.so.2.53
+ endif
+ RCFILE          =       glide.rc
++LINKLIBRARIES	+=	-lm
+ 
+ # Make a static link library for things like the diags.
+ ifeq ($(FX_DLL_BUILD),1)

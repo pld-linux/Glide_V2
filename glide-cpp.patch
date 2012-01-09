@@ -1,0 +1,204 @@
+--- GlideV2/glide3x/cvg/glide3/src/fxglide.h.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/src/fxglide.h	2012-01-08 20:16:45.707252884 +0100
+@@ -1417,7 +1417,7 @@
+ 
+ #ifdef GLIDE3
+ #define GR_STATE_ENTRY(name, type, args) \
+-   type _##name## args
++   type _##name args
+ #else
+ #define GR_STATE_ENTRY(name, type, args) \
+    GR_ENTRY(name, type, args)
+@@ -3339,17 +3339,17 @@
+ #endif
+ 
+ #ifdef GLIDE3_DEBUG
+-#define TEX_INFO(ptr,field)                         ptr##field
++#define TEX_INFO(ptr,field)                         ptr.field
+ #define G3_LOD_TRANSLATE(lod)                       (lod)
+ #define G3_ASPECT_TRANSLATE(aspect)                 (aspect)
+ #else /* !GLIDE3_DEBUG */
+-#define TEX_INFO(ptr,field)                         ptr##field##Log2
++#define TEX_INFO(ptr,field)                         ptr.field##Log2
+ #define G3_LOD_TRANSLATE(lod)                       (0x8-lod)
+ #define G3_ASPECT_TRANSLATE(aspect)                 (0x3-(aspect))
+ #endif /* !GLIDE3_DEBUG */
+ 
+ #else /* !(defined(GLIDE3) && defined(GLIDE3_ALPHA)) */
+-#define TEX_INFO(ptr,field)                         ptr##field
++#define TEX_INFO(ptr,field)                         ptr.field
+ #define G3_LOD_TRANSLATE(lod)                       (lod)
+ #define G3_ASPECT_TRANSLATE(aspect)                 (aspect)
+ #endif /* !(defined(GLIDE3) && defined(GLIDE3_ALPHA)) */
+--- GlideV2/glide3x/cvg/glide3/src/gsplash.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/src/gsplash.c	2012-01-08 20:16:33.697252482 +0100
+@@ -298,9 +298,9 @@
+ downloadTexture(Texture *texture, Gu3dfInfo *info) 
+ {
+   texture->info.data        = info->data;
+-  TEX_INFO(texture->info.,smallLod)    = info->header.small_lod;
+-  TEX_INFO(texture->info.,largeLod)    = info->header.large_lod;
+-  TEX_INFO(texture->info.,aspectRatio) = info->header.aspect_ratio;
++  TEX_INFO(texture->info,smallLod)    = info->header.small_lod;
++  TEX_INFO(texture->info,largeLod)    = info->header.large_lod;
++  TEX_INFO(texture->info,aspectRatio) = info->header.aspect_ratio;
+   texture->info.format      = info->header.format;
+ 
+   texture->addr = nextFreeBase;
+--- GlideV2/glide3x/cvg/glide3/src/ditex.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/src/ditex.c	2012-01-08 20:22:59.743932075 +0100
+@@ -568,9 +568,9 @@
+   FxU32 memrequired;
+ 
+   GR_CHECK_F( "grTexTextureMemRequired", !info, "invalid info pointer" );
+-  memrequired = _grTexTextureMemRequired( G3_LOD_TRANSLATE(TEX_INFO(info->,smallLod)),
+-                                          G3_LOD_TRANSLATE(TEX_INFO(info->,largeLod)),
+-                                          G3_ASPECT_TRANSLATE(TEX_INFO(info->,aspectRatio)),
++  memrequired = _grTexTextureMemRequired( G3_LOD_TRANSLATE(TEX_INFO((*info),smallLod)),
++                                          G3_LOD_TRANSLATE(TEX_INFO((*info),largeLod)),
++                                          G3_ASPECT_TRANSLATE(TEX_INFO((*info),aspectRatio)),
+                                           info->format,
+                                           evenOdd );
+                         
+@@ -635,12 +635,12 @@
+     ---------------------------------------------------------------*/
+ #if defined(GLIDE3) && defined(GLIDE3_ALPHA)
+ #ifdef GLIDE3_DEBUG
+-  for( lod = TEX_INFO(info->,largeLod); lod <= TEX_INFO(info->,smallLod); lod++ ) {
++  for( lod = TEX_INFO((*info),largeLod); lod <= TEX_INFO((*info),smallLod); lod++ ) {
+ #else
+-  for( lod = TEX_INFO(info->,largeLod); lod >= TEX_INFO(info->,smallLod); lod-- ) {
++  for( lod = TEX_INFO((*info),largeLod); lod >= TEX_INFO((*info),smallLod); lod-- ) {
+ #endif
+ #else
+-  for( lod = TEX_INFO(info->,largeLod); lod <= TEX_INFO(info->,smallLod); lod++ ) {
++  for( lod = TEX_INFO((*info),largeLod); lod <= TEX_INFO((*info),smallLod); lod++ ) {
+ #endif
+     /*
+     ** note for glide3 lod translation:
+@@ -649,13 +649,13 @@
+     grTexDownloadMipMapLevel( tmu, 
+                               startAddress, 
+                               lod,
+-                              TEX_INFO(info->,largeLod),
+-                              TEX_INFO(info->,aspectRatio),
++                              TEX_INFO((*info),largeLod),
++                              TEX_INFO((*info),aspectRatio),
+                               info->format,
+                               evenOdd,
+                               src_base );
+                
+-    src_base += _grMipMapHostSize[_gr_aspect_index_table[G3_ASPECT_TRANSLATE(TEX_INFO(info->,aspectRatio))]][G3_LOD_TRANSLATE(lod)]
++    src_base += _grMipMapHostSize[_gr_aspect_index_table[G3_ASPECT_TRANSLATE(TEX_INFO((*info),aspectRatio))]][G3_LOD_TRANSLATE(lod)]
+                     << (info->format>=GR_TEXFMT_16BIT);
+   }
+ } /* grTexDownloadMipMap */
+--- GlideV2/glide3x/cvg/glide3/src/gtex.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/src/gtex.c	2012-01-09 16:40:49.713045393 +0100
+@@ -980,16 +980,16 @@
+   /*-------------------------------------------------------------
+     Update Texture Unit State
+     -------------------------------------------------------------*/
+-  gc->state.tmu_config[tmu].smallLod = G3_LOD_TRANSLATE(TEX_INFO(info->,smallLod));
+-  gc->state.tmu_config[tmu].largeLod = G3_LOD_TRANSLATE(TEX_INFO(info->,largeLod));
++  gc->state.tmu_config[tmu].smallLod = G3_LOD_TRANSLATE(TEX_INFO((*info),smallLod));
++  gc->state.tmu_config[tmu].largeLod = G3_LOD_TRANSLATE(TEX_INFO((*info),largeLod));
+   gc->state.tmu_config[tmu].evenOdd  =  evenOdd; 
+   
+   /*-------------------------------------------------------------
+     Calculate Base Address
+     -------------------------------------------------------------*/
+   baseAddress = _grTexCalcBaseAddress(startAddress,
+-                                       G3_LOD_TRANSLATE(TEX_INFO(info->,largeLod)),
+-                                       G3_ASPECT_TRANSLATE(TEX_INFO(info->,aspectRatio)),
++                                       G3_LOD_TRANSLATE(TEX_INFO((*info),largeLod)),
++                                       G3_ASPECT_TRANSLATE(TEX_INFO((*info),aspectRatio)),
+                                        info->format,
+                                        evenOdd) >> 3;
+ #if (GLIDE_PLATFORM & GLIDE_HW_H3)
+@@ -1016,11 +1016,11 @@
+   tLod = gc->state.tmu_config[tmu].tLOD;
+   tLod &= ~(SST_LODMIN | SST_LODMAX | SST_LOD_ASPECT |
+             SST_LOD_TSPLIT | SST_LOD_ODD | SST_LOD_S_IS_WIDER);
+-  tLod |= SST_TLOD_MINMAX_INT(G3_LOD_TRANSLATE(TEX_INFO(info->,largeLod)),
++  tLod |= SST_TLOD_MINMAX_INT(G3_LOD_TRANSLATE(TEX_INFO((*info),largeLod)),
+                      gc->state.tmu_config[tmu].mmMode==GR_MIPMAP_DISABLE ? 
+-                              G3_LOD_TRANSLATE(TEX_INFO(info->,largeLod)) : G3_LOD_TRANSLATE(TEX_INFO(info->,smallLod)));
++                              G3_LOD_TRANSLATE(TEX_INFO((*info),largeLod)) : G3_LOD_TRANSLATE(TEX_INFO((*info),smallLod)));
+   tLod |= _gr_evenOdd_xlate_table[evenOdd];
+-  tLod |= _gr_aspect_xlate_table[G3_ASPECT_TRANSLATE(TEX_INFO(info->,aspectRatio))];
++  tLod |= _gr_aspect_xlate_table[G3_ASPECT_TRANSLATE(TEX_INFO((*info),aspectRatio))];
+ 
+   /* Write relevant registers out to hardware */
+   hw = SST_TMU(hw, tmu);
+@@ -1175,7 +1175,7 @@
+ #else
+                                            G3_LOD_TRANSLATE(GR_LOD_LOG2_256),
+ #endif
+-                                           G3_ASPECT_TRANSLATE(TEX_INFO(info->,aspectRatio)),
++                                           G3_ASPECT_TRANSLATE(TEX_INFO((*info),aspectRatio)),
+                                            info->format,
+                                            evenOdd) >> 3;
+       GR_SET(tmuChip, hw, texBaseAddr, baseAddress);
+@@ -1189,7 +1189,7 @@
+ #else
+                                            G3_LOD_TRANSLATE(GR_LOD_LOG2_128),
+ #endif
+-                                           G3_ASPECT_TRANSLATE(TEX_INFO(info->,aspectRatio)),
++                                           G3_ASPECT_TRANSLATE(TEX_INFO((*info),aspectRatio)),
+                                            info->format,
+                                            evenOdd) >> 3;
+       GR_SET(tmuChip, hw, texBaseAddr1, baseAddress);
+@@ -1203,7 +1203,7 @@
+ #else
+                                            G3_LOD_TRANSLATE(GR_LOD_LOG2_64),
+ #endif
+-                                           G3_ASPECT_TRANSLATE(TEX_INFO(info->,aspectRatio)),
++                                           G3_ASPECT_TRANSLATE(TEX_INFO((*info),aspectRatio)),
+                                            info->format,
+                                            evenOdd) >> 3;
+       GR_SET(tmuChip, hw, texBaseAddr2, baseAddress);
+@@ -1217,7 +1217,7 @@
+ #else
+                                            G3_LOD_TRANSLATE(GR_LOD_LOG2_32),
+ #endif
+-                                           G3_ASPECT_TRANSLATE(TEX_INFO(info->,aspectRatio)),
++                                           G3_ASPECT_TRANSLATE(TEX_INFO((*info),aspectRatio)),
+                                            info->format,
+                                            evenOdd) >> 3;
+       GR_SET(tmuChip, hw, texBaseAddr38, baseAddress);
+--- GlideV2/glide3x/cvg/glide3/src/distate.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/src/distate.c	2012-01-09 16:50:12.976397585 +0100
+@@ -166,25 +166,25 @@
+  */
+ 
+ #define STOREARG(function, arg) \
+-gc->state.stateArgs.##function##Args.arg = arg
++gc->state.stateArgs.function##Args.arg = arg
+ 
+ #define LOADARG(function, arg) \
+-gc->state.stateArgs.##function##Args.arg
++gc->state.stateArgs.function##Args.arg
+ 
+ #define INVALIDATE(regset) \
+-gc->state.invalid |= ##regset##BIT
++gc->state.invalid |= regset##BIT
+ 
+ #define NOTVALID(regset) \
+-(gc->state.invalid & ##regset##BIT)
++(gc->state.invalid & regset##BIT)
+ 
+ #define SETVALID(regset) \
+-(gc->state.invalid &= ~(##regset##BIT))
++(gc->state.invalid &= ~(regset##BIT))
+ 
+ #define ENABLEMODE(mode) \
+-gc->state.grEnableArgs.##mode## = GR_MODE_ENABLE;
++gc->state.grEnableArgs.mode = GR_MODE_ENABLE;
+ 
+ #define DISABLEMODE(mode) \
+-gc->state.grEnableArgs.##mode## = GR_MODE_DISABLE;
++gc->state.grEnableArgs.mode = GR_MODE_DISABLE;
+ 
+ /*-------------------------------------------------------------------
+   Function: grAlphaBlendFunction

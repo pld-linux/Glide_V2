@@ -1,0 +1,329 @@
+--- GlideV2/glide2x.orig/cvg/glide/tests/display.c
++++ GlideV2/glide2x/cvg/glide/tests/display.c
+@@ -65,6 +65,10 @@ static const char *sourceFormatString[] 
+     "GR_LFB_SRC_FMT_ZA16      "
+ };
+ 
++static void imageConvert( void *dst,
++                          void *src,
++                          GrLfbSrcFmt_t format,
++                          FxU32 *bpp );
+ 
+ int main( int argc, char **argv)
+ {
+@@ -91,11 +95,6 @@ int main( int argc, char **argv)
+     static FxU32 imageWidth;
+     static FxU32 imageHeight;
+ 
+-    static void imageConvert( void *dst, 
+-                              void *src,
+-                              GrLfbSrcFmt_t format, 
+-                              FxU32 *bpp );
+-
+     srcfname[0] = 0;
+     dstfname[0] = 0;
+ 
+--- GlideV2/glide2x.orig/cvg/glide/tests/test26.c
++++ GlideV2/glide2x/cvg/glide/tests/test26.c
+@@ -57,6 +57,10 @@ static const char *sourceFormatString[] 
+   "GR_LFB_SRC_FMT_ZA16      "
+ };
+ 
++static void imageConvert( void *dst,
++                          void *src,
++                          GrLfbSrcFmt_t format,
++                          FxU32 *bpp );
+ 
+ int main( int argc, char **argv) {
+   char match; 
+@@ -80,11 +84,6 @@ int main( int argc, char **argv) {
+   static FxU32 imageWidth;
+   static FxU32 imageHeight;
+ 
+-  static void imageConvert( void *dst, 
+-                            void *src,
+-                            GrLfbSrcFmt_t format, 
+-                            FxU32 *bpp );
+-
+   /* Process Command Line Arguments */
+   while( (rv = tlGetOpt( argc, argv, "bdnr", &match, &remArgs )) ) {
+     if ( rv == -1 ) {
+--- GlideV2/glide3x.orig/cvg/glide3/tests/display.c
++++ GlideV2/glide3x/cvg/glide3/tests/display.c
+@@ -56,6 +56,10 @@ static const char *sourceFormatString[] 
+     "GR_LFB_SRC_FMT_ZA16      "
+ };
+ 
++static void imageConvert( void *dst,
++                          void *src,
++                          GrLfbSrcFmt_t format,
++                          FxU32 *bpp );
+ 
+ void main( int argc, char **argv) {
+     char match; 
+@@ -81,11 +85,6 @@ void main( int argc, char **argv) {
+     static FxU32 imageWidth;
+     static FxU32 imageHeight;
+ 
+-    static void imageConvert( void *dst, 
+-                              void *src,
+-                              GrLfbSrcFmt_t format, 
+-                              FxU32 *bpp );
+-
+     srcfname[0] = 0;
+     dstfname[0] = 0;
+ 
+--- GlideV2/glide3x.orig/cvg/glide3/tests/test26.c
++++ GlideV2/glide3x/cvg/glide3/tests/test26.c
+@@ -48,6 +48,10 @@ static const char *sourceFormatString[] 
+     "GR_LFB_SRC_FMT_ZA16      "
+ };
+ 
++static void imageConvert( void *dst,
++                          void *src,
++                          GrLfbSrcFmt_t format,
++                          FxU32 *bpp );
+ 
+ void main( int argc, char **argv) {
+     char match; 
+@@ -69,11 +73,6 @@ void main( int argc, char **argv) {
+     static FxU32 imageWidth;
+     static FxU32 imageHeight;
+ 
+-    static void imageConvert( void *dst, 
+-                              void *src,
+-                              GrLfbSrcFmt_t format, 
+-                              FxU32 *bpp );
+-
+     /* Initialize Glide */
+     grGlideInit();
+     assert( hwconfig = tlVoodooType() );
+--- GlideV2/glide3x/cvg/glide3/src/gaa.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/src/gaa.c	2012-01-09 16:01:27.262966287 +0100
+@@ -572,7 +572,7 @@
+       e = pointers;
+       if (mode)
+         e = *(float **)e;
+-      (float *)pointers += stride;
++      pointers = (float *)pointers + stride;
+       
+       ptX = FARRAY(e, gc->state.vData.vertexInfo.offset);
+       ptY = FARRAY(e, gc->state.vData.vertexInfo.offset+4);
+@@ -673,7 +673,7 @@
+       if (mode)
+         e = *(float **)e;
+       oow = 1.0f / FARRAY(e, gc->state.vData.wInfo.offset);        
+-      (float *)pointers += stride;
++      pointers = (float *)pointers + stride;
+       
+       ptX = FARRAY(e, gc->state.vData.vertexInfo.offset)
+         *oow*gc->state.Viewport.hwidth+gc->state.Viewport.ox;
+@@ -790,9 +790,9 @@
+         v1 = *(float **)v1;
+         v2 = *(float **)v2;
+       }
+-      (float *)pointers += stride;
++      pointers = (float *)pointers + stride;
+       if (ltype == GR_LINES)
+-        (float *)pointers += stride;
++        pointers = (float *)pointers + stride;
+       
+       /* draw from low Y to high Y */
+       if (FARRAY(v2, gc->state.vData.vertexInfo.offset+4) < FARRAY(v1, gc->state.vData.vertexInfo.offset+4)) {
+@@ -966,9 +966,9 @@
+           v1 = *(float **)v1;
+           v2 = *(float **)v2;
+         }
+-        (float *)pointers += stride;
++        pointers = (float *)pointers + stride;
+         if (ltype == GR_LINES)
+-          (float *)pointers += stride;
++          pointers = (float *)pointers + stride;
+         owa = oowa = 1.0f / FARRAY(v1, gc->state.vData.wInfo.offset);
+         owb = oowb = 1.0f / FARRAY(v2, gc->state.vData.wInfo.offset);
+       }
+@@ -980,7 +980,7 @@
+           v1 = *(float **)v1;
+           v2 = *(float **)v2;
+         }
+-        (float *)pointers += stride;
++        pointers = (float *)pointers + stride;
+         owb = oowb = 1.0f / FARRAY(v2, gc->state.vData.wInfo.offset);
+       }
+       
+@@ -1304,7 +1304,7 @@
+       b = *(float **)b;
+       c = *(float **)c;
+     }
+-    (float *)pointers += stride*3;
++    pointers = (float *)pointers + stride*3;
+ 
+     /* move culling test to here */
+     {
+@@ -1612,7 +1612,7 @@
+       b = *(float **)b;
+       c = *(float **)c;
+     }
+-    (float *)pointers += stride*3;
++    pointers = (float *)pointers + stride*3;
+     oowa = 1.0f / FARRAY(a, gc->state.vData.wInfo.offset);        
+     oowb = 1.0f / FARRAY(b, gc->state.vData.wInfo.offset);        
+     oowc = 1.0f / FARRAY(c, gc->state.vData.wInfo.offset);        
+@@ -1777,7 +1777,7 @@
+   if (type == kSetupFan) {
+     v[0] = (mode == 0) ? pointers : *(float **)pointers;
+     while (sCount--) {
+-      (float *)pointers += stride;
++      pointers = (float *)pointers + stride;
+       if (mode) {
+         v[1] = *(float **)pointers;
+         v[2] = *((float **)pointers+1);
+@@ -1819,7 +1819,7 @@
+         _grAADrawTriangles(1, type, 3, v);
+       else
+         _grAAVpDrawTriangles(1, type, 3, v);    
+-      (float *)pointers += stride;
++      pointers = (float *)pointers + stride;
+       flip = ~flip;
+     }
+     flip = ~flip;
+--- GlideV2/glide3x/cvg/glide3/src/gdraw.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/src/gdraw.c	2012-01-09 16:06:50.666310453 +0100
+@@ -457,7 +457,7 @@
+         vPtr = pointers;
+         if (mode) vPtr = *(float **)vPtr;
+         
+-        (float *)pointers += stride;
++        pointers = (float *)pointers + stride;
+         
+         GDBG_INFO_MORE(gc->myLevel, "(%f %f)\n",  
+                        FARRAY(vPtr,gc->state.vData.vertexInfo.offset), 
+@@ -546,7 +546,7 @@
+         if (mode)
+           vPtr = *(float **)vPtr;
+         oow = 1.0f / FARRAY(vPtr, gc->state.vData.wInfo.offset);        
+-        (float *)pointers += stride;
++        pointers = (float *)pointers + stride;
+         
+         {
+           FxU32 x, y;
+@@ -666,9 +666,9 @@
+           a = *(float **)a;
+           b = *(float **)b;
+         }
+-        (float *)pointers += stride;
++        pointers = (float *)pointers + stride;
+         if (ltype == GR_LINES)
+-          (float *)pointers += stride;
++          pointers = (float *)pointers + stride;
+         
+         /*
+         ** compute absolute deltas and draw from low Y to high Y
+@@ -828,10 +828,10 @@
+             a = *(float **)a;
+             b = *(float **)b;
+           }
+-          (float *)pointers += stride;
++          pointers = (float *)pointers + stride;
+           owa = oowa = 1.0f / FARRAY(a, gc->state.vData.wInfo.offset);        
+           owb = oowb = 1.0f / FARRAY(b, gc->state.vData.wInfo.offset);        
+-          (float *)pointers += stride;
++          pointers = (float *)pointers + stride;
+         }
+         else {
+           owa = oowa = oowb;
+@@ -841,7 +841,7 @@
+             a = *(float **)a;
+             b = *(float **)b;
+           }
+-          (float *)pointers += stride;
++          pointers = (float *)pointers + stride;
+           owb = oowb = 1.0f / FARRAY(b, gc->state.vData.wInfo.offset);
+         }
+         fay = tmp1 = FARRAY(a, gc->state.vData.vertexInfo.offset+4)
+@@ -1011,7 +1011,7 @@
+         vPtr = pointers;
+         if (mode)
+           vPtr = *(float **)vPtr;
+-        (float *)pointers += stride;
++        pointers = (float *)pointers + stride;
+         
+         i = gc->tsuDataList[dataElem];
+         
+@@ -1051,7 +1051,7 @@
+                  *oow*gc->state.Viewport.hwidth + gc->state.Viewport.ox);
+         TRI_SETF(FARRAY(vPtr, 4)
+                  *oow*gc->state.Viewport.hheight + gc->state.Viewport.oy);
+-        (float *)pointers += stride;
++        pointers = (float *)pointers + stride;
+         
+         TRI_VP_SETFS(vPtr,oow);
+       }
+--- GlideV2/glide3x/cvg/glide3/tests/test31.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/tests/test31.c	2012-01-09 17:08:13.793100443 +0100
+@@ -307,12 +307,12 @@
+         packedrgb = !packedrgb;
+         if (packedrgb) {
+           grVertexLayout(GR_PARAM_PARGB,   GR_VERTEX_R_OFFSET << 2, GR_PARAM_ENABLE);
+-          (FxU32)vtxList[0].r = 0xff0000ff;
+-          (FxU32)vtxList[1].r = 0xff00ff00;
+-          (FxU32)vtxList[2].r = 0xffff0000;
+-          (FxU32)vtxList[3].r = 0xffff0000;
+-          (FxU32)vtxList[4].r = 0xff00ff00;
+-          (FxU32)vtxList[5].r = 0xff0000ff;
++          *(FxU32*)&vtxList[0].r = 0xff0000ff;
++          *(FxU32*)&vtxList[1].r = 0xff00ff00;
++          *(FxU32*)&vtxList[2].r = 0xffff0000;
++          *(FxU32*)&vtxList[3].r = 0xffff0000;
++          *(FxU32*)&vtxList[4].r = 0xff00ff00;
++          *(FxU32*)&vtxList[5].r = 0xff0000ff;
+         }
+         else {
+           grVertexLayout(GR_PARAM_RGB, GR_VERTEX_R_OFFSET << 2, GR_PARAM_ENABLE);
+--- GlideV2/glide3x/cvg/glide3/tests/test32.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/tests/test32.c	2012-01-09 17:13:56.743111927 +0100
+@@ -449,10 +449,10 @@
+         packedrgb = !packedrgb;
+         if (packedrgb) {
+           grVertexLayout(GR_PARAM_PARGB,   GR_VERTEX_R_OFFSET << 2, GR_PARAM_ENABLE);
+-          (FxU32)srcVerts[0].r = 0xff0000ff;
+-          (FxU32)srcVerts[1].r = 0xff00ff00;
+-          (FxU32)srcVerts[2].r = 0xffff0000;
+-          (FxU32)srcVerts[3].r = 0xffff0000;
++          *(FxU32*)&srcVerts[0].r = 0xff0000ff;
++          *(FxU32*)&srcVerts[1].r = 0xff00ff00;
++          *(FxU32*)&srcVerts[2].r = 0xffff0000;
++          *(FxU32*)&srcVerts[3].r = 0xffff0000;
+         }
+         else {
+           grVertexLayout(GR_PARAM_RGB, GR_VERTEX_R_OFFSET << 2, GR_PARAM_ENABLE);
+--- GlideV2/glide3x/cvg/glide3/tests/sbench.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/tests/sbench.c	2012-01-09 17:50:20.359851708 +0100
+@@ -281,11 +281,11 @@
+                               0.5f, 0.5f);
+ 
+           if (packedrgb) {
+-            (FxU32) vPtrArray[v][GR_VERTEX_R_OFFSET] =
++            *(FxU32*) &vPtrArray[v][GR_VERTEX_R_OFFSET] =
+               ((unsigned char) (vPtrArray[v][GR_VERTEX_R_OFFSET]) << 16) |
+               ((unsigned char) (vPtrArray[v][GR_VERTEX_G_OFFSET]) << 8) |
+               ((unsigned char) (vPtrArray[v][GR_VERTEX_B_OFFSET]));
+-            (FxU32) vPtrArray[v][GR_VERTEX_R_OFFSET] |= 0xff000000;
++            *(FxU32*) &vPtrArray[v][GR_VERTEX_R_OFFSET] |= 0xff000000;
+           }
+         }
+       } else { /* listType == GR_TRIANGLE_FAN */
+@@ -356,11 +356,11 @@
+             vPtrArray[v][GR_VERTEX_A_OFFSET] = 255.f;
+           }
+           if (packedrgb) {
+-            (FxU32) vPtrArray[v][GR_VERTEX_R_OFFSET] =
++            *(FxU32*) &vPtrArray[v][GR_VERTEX_R_OFFSET] =
+               ((unsigned char) (vPtrArray[v][GR_VERTEX_R_OFFSET]) << 16) |
+               ((unsigned char) (vPtrArray[v][GR_VERTEX_G_OFFSET]) << 8) |
+               ((unsigned char) (vPtrArray[v][GR_VERTEX_B_OFFSET]));
+-            (FxU32) vPtrArray[v][GR_VERTEX_R_OFFSET] |= 0xff000000;
++            *(FxU32*) &vPtrArray[v][GR_VERTEX_R_OFFSET] |= 0xff000000;
+           }
+         }
+ #endif
