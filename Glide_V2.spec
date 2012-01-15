@@ -161,13 +161,13 @@ install swlibs/texus/examples/makefile.distrib $RPM_BUILD_ROOT%{_examplesdir}/gl
 install swlibs/texus/examples/*.c $RPM_BUILD_ROOT%{_examplesdir}/glide2x-%{version}/texus/examples
 
 # glide3x headers
-install swlibs/include/3dfx.h $RPM_BUILD_ROOT%{_includedir}/glide
-install swlibs/include/linutil.h $RPM_BUILD_ROOT%{_includedir}/glide
-install swlibs/include/texus.h $RPM_BUILD_ROOT%{_includedir}/glide
-install glide3x/cvg/include/glide.h $RPM_BUILD_ROOT%{_includedir}/glide
-install glide3x/cvg/include/glidesys.h $RPM_BUILD_ROOT%{_includedir}/glide
-install glide3x/cvg/include/glideutl.h $RPM_BUILD_ROOT%{_includedir}/glide
-install glide3x/cvg/include/sst1vid.h $RPM_BUILD_ROOT%{_includedir}/glide
+install swlibs/include/3dfx.h $RPM_BUILD_ROOT%{_includedir}/glide3
+install swlibs/include/linutil.h $RPM_BUILD_ROOT%{_includedir}/glide3
+install swlibs/include/texus.h $RPM_BUILD_ROOT%{_includedir}/glide3
+install glide3x/cvg/include/glide.h $RPM_BUILD_ROOT%{_includedir}/glide3
+install glide3x/cvg/include/glidesys.h $RPM_BUILD_ROOT%{_includedir}/glide3
+install glide3x/cvg/include/glideutl.h $RPM_BUILD_ROOT%{_includedir}/glide3
+install glide3x/cvg/include/sst1vid.h $RPM_BUILD_ROOT%{_includedir}/glide3
 
 # glide3x examples
 install glide3x/cvg/glide3/tests/makefile.distrib $RPM_BUILD_ROOT%{_examplesdir}/glide3x-%{version}/tests/makefile
