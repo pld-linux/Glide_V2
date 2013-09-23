@@ -1,0 +1,46 @@
+--- GlideV2/glide2x/cvg/glide/tests/tlib.c.orig	2000-04-20 23:26:36.000000000 +0200
++++ GlideV2/glide2x/cvg/glide/tests/tlib.c	2013-09-21 07:44:29.182138177 +0200
+@@ -1433,7 +1433,7 @@
+ 
+ FxBool
+ tlErrorMessage( char *err) {
+-  fprintf(stderr, err);
++  fputs(err, stderr);
+ } /* tlErrorMessage */
+ 
+ #else
+--- GlideV2/glide3x/cvg/glide3/tests/tlib.c.orig	2000-04-20 23:26:36.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/tests/tlib.c	2013-09-21 07:44:29.182138177 +0200
+@@ -1433,7 +1433,7 @@
+ 
+ FxBool
+ tlErrorMessage( char *err) {
+-  fprintf(stderr, err);
++  fputs(err, stderr);
+ } /* tlErrorMessage */
+ 
+ #else
+--- GlideV2/swlibs/fxmisc/fximg.c.orig	2000-04-20 23:26:42.000000000 +0200
++++ GlideV2/swlibs/fxmisc/fximg.c	2013-09-21 08:00:09.335790777 +0200
+@@ -1879,8 +1879,8 @@
+ 	    char buf[1024], *p;
+ 	    strcpy(buf,prefix);			// copy and replace semicolon
+ 	    if (p = strchr(buf,';')) *p = '\0';
+-	    fprintf(stderr,buf);
+-	    fprintf(stderr,"/");
++	    fputs(buf,stderr);
++	    fputs("/",stderr);
+ 	}
+ 	fprintf (stderr,"%s (%dx%d) ...", filename, info->any.width,info->any.height);
+ 	fflush(stderr);
+--- GlideV2/swlibs/newpci/pcilib/fxlinux.c.orig	2000-04-20 23:26:42.000000000 +0200
++++ GlideV2/swlibs/newpci/pcilib/fxlinux.c	2013-09-21 08:01:44.556878851 +0200
+@@ -186,7 +186,7 @@
+ static FxBool 
+ pciOutputStringLinux(const char *msg) 
+ {
+-  printf(msg);
++  fputs(msg,stdout);
+   return FXTRUE;
+ }
+ 

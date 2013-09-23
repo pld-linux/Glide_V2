@@ -16,6 +16,9 @@ Patch0:		glide-gcc4.patch
 Patch1:		glide-gasp.patch
 Patch2:		glide-cpp.patch
 Patch3:		glide-link.patch
+Patch4:		glide-morearchs.patch
+Patch5:		glide-format.patch
+Patch6:		glide-include.patch
 URL:		http://glide.sourceforge.net/
 %ifarch %{ix86}
 BuildRequires:	/usr/bin/gasp
@@ -86,6 +89,9 @@ Interactive Voodoo przy użyciu interfejsu Glide 3.x.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
 chmod +x swlibs/include/make/ostype
 %{__rm} glide3x/cvg/init/*.{o,a}
 
@@ -95,10 +101,14 @@ ln glide3x/README README.glide3x
 %build
 # Make sure we build for Voodoo2
 export FX_GLIDE_HW=cvg
-%{__make} V2 \
+%{__make} -j1 V2 \
 	CC="%{__cc}" \
 	CNODEBUG="%{rpmcflags} %{!?debug:-fomit-frame-pointer -funroll-loops} \
-		%{!?debug:-fexpensive-optimizations -ffast-math -DBIG_OPT}"
+		%{!?debug:-fexpensive-optimizations -ffast-math -DBIG_OPT}" \
+%ifnarch %{ix86}
+	FX_GLIDE_CTRISETUP=1
+%endif
+	
 
 %install
 rm -rf $RPM_BUILD_ROOT

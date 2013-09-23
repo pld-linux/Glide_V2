@@ -1,0 +1,170 @@
+--- GlideV2/glide2x/cvg/init/sst1init.h.orig	2013-09-21 07:41:42.484397830 +0200
++++ GlideV2/glide2x/cvg/init/sst1init.h	2013-09-21 07:46:29.837739823 +0200
+@@ -163,4 +163,16 @@
+ #elif defined (__GNUC__) && defined(__i386__)
+ #  define P6FENCE asm("xchg %%eax,%0" : /*outputs*/ : "m" (p6FenceVar) : \
+ 					"eax");
++#elif defined(__ia64__)
++#define P6FENCE asm volatile ("mf.a" ::: "memory");
++#elif defined(__alpha__)
++# define P6FENCE asm volatile("mb" ::: "memory");
++#elif defined(__powerpc__)
++# define P6FENCE asm volatile ("sync" ::: "memory");
++#elif defined (__x86_64__)
++# define P6FENCE asm volatile("mfence" ::: "memory");
++#elif defined(__sparc64__)
++# define P6FENCE asm volatile("membar #LoadLoad | #LoadStore | #StoreStore | #StoreLoad" ::: "memory");
++#elif defined(__sparc__)
++# define P6FENCE asm volatile("" ::: "memory");
+ #else
+--- GlideV2/glide2x/cvg/glide/src/cpudetect.c.orig	2000-04-20 23:26:36.000000000 +0200
++++ GlideV2/glide2x/cvg/glide/src/cpudetect.c	2013-09-21 08:28:32.804847399 +0200
+@@ -34,14 +34,25 @@
+ }
+ 
+ void single_precision_asm() {
++#if defined(__x86_64__)
++  asm("push %rax \n fnclex \n fstcw (%rsp) \n movl (%rsp), %eax \n "
++      "and $0x0000fcff, %eax \n movl %eax, (%rsp) \n fldcw (%rsp) \n pop %rax");
++#elif defined(__i386__)
+   asm("push %eax \n fnclex \n fstcw (%esp) \n movl (%esp), %eax \n "
+       "and $0x0000fcff, %eax \n movl %eax, (%esp) \n fldcw (%esp) \n pop %eax");
++#endif
+ }
+ 
+ 
+ void double_precision_asm() {
+-  asm("push %eax \n fnclex \n fstcw (%esp) \n movw (%esp), %eax \n "
++#if defined(__x86_64__)
++  asm("push %rax \n fnclex \n fstcw (%rsp) \n movl (%rsp), %eax \n "
++      "and $0x0000fcff, %eax \n or $0x000002ff, %eax \n mov %eax, (%rsp) \n "
++      "fldcw (%rsp) \n pop %rax");
++#elif defined(__i386__)
++  asm("push %eax \n fnclex \n fstcw (%esp) \n movl (%esp), %eax \n "
+       "and $0x0000fcff, %eax \n or $0x000002ff, %eax \n mov %eax, (%esp) \n "
+       "fldcw (%esp) \n pop %eax");
++#endif
+ }
+ 
+--- GlideV2/glide2x/cvg/init/makefile.linux.orig	2000-04-20 23:26:36.000000000 +0200
++++ GlideV2/glide2x/cvg/init/makefile.linux	2013-09-21 10:33:25.196185785 +0200
+@@ -52,5 +52,5 @@
+ # for some strange reason
+ #
+ ifndef DEBUG
+-CFLAGS = -g $(GCFLAGS) $(LCFLAGS) $(VCFLAGS)
++CFLAGS = -g $(GCFLAGS) $(LCFLAGS) $(VCFLAGS) -fPIC
+ endif
+--- GlideV2/glide3x/cvg/init/sst1init.h.orig	2013-09-21 07:41:42.484397830 +0200
++++ GlideV2/glide3x/cvg/init/sst1init.h	2013-09-21 07:46:29.837739823 +0200
+@@ -163,4 +163,16 @@
+ #elif defined (__GNUC__) && defined(__i386__)
+ #  define P6FENCE asm("xchg %%eax,%0" : /*outputs*/ : "m" (p6FenceVar) : \
+ 					"eax");
++#elif defined(__ia64__)
++#define P6FENCE asm volatile ("mf.a" ::: "memory");
++#elif defined(__alpha__)
++# define P6FENCE asm volatile("mb" ::: "memory");
++#elif defined(__powerpc__)
++# define P6FENCE asm volatile ("sync" ::: "memory");
++#elif defined (__x86_64__)
++# define P6FENCE asm volatile("mfence" ::: "memory");
++#elif defined(__sparc64__)
++# define P6FENCE asm volatile("membar #LoadLoad | #LoadStore | #StoreStore | #StoreLoad" ::: "memory");
++#elif defined(__sparc__)
++# define P6FENCE asm volatile("" ::: "memory");
+ #else
+--- GlideV2/glide3x/cvg/glide3/src/makefile.linux.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/src/makefile.linux	2013-09-21 14:30:15.403246286 +0200
+@@ -144,7 +144,7 @@
+ CFILES          =       gxdraw.c
+ else
+ CFILES          =       gxdraw.c
+-ASMTRISETUP     =       xdraw2.S xdraw3.S
++ASMTRISETUP     =       xdraw2.S xdraw3.S cpudtect.S
+ DSPOPTS         +=       -DGLIDE_PACKED_RGB=0 -DGLIDE_TRI_CULLING=1
+ endif
+ 
+@@ -193,7 +193,7 @@
+ LAINCS          =       -I$(BUILD_ROOT)/$(FX_GLIDE_HW)/include
+ LAOPTS          =       $(DBGOPTS) $(DSPOPTS) $(OPTOPTS)
+ 
+-AFILES          =       $(ASMTRISETUP) cpudtect.S
++AFILES          =       $(ASMTRISETUP)
+ 
+ # sources
+ HEADERS         =       glide.h glidesys.h glideutl.h
+--- GlideV2/glide3x/cvg/init/makefile.linux.orig	2000-04-20 23:26:36.000000000 +0200
++++ GlideV2/glide3x/cvg/init/makefile.linux	2013-09-21 10:33:25.196185785 +0200
+@@ -52,5 +52,5 @@
+ # for some strange reason
+ #
+ ifndef DEBUG
+-CFLAGS = -g $(GCFLAGS) $(LCFLAGS) $(VCFLAGS)
++CFLAGS = -g $(GCFLAGS) $(LCFLAGS) $(VCFLAGS) -fPIC
+ endif
+--- GlideV2/glide3x/cvg/glide3/src/gdraw.c.orig	2013-09-22 19:48:44.822836076 +0200
++++ GlideV2/glide3x/cvg/glide3/src/gdraw.c	2013-09-23 19:53:38.014765302 +0200
+@@ -243,7 +243,7 @@
+     vlist[0] = (float *)a;
+     vlist[1] = (float *)b;
+     vlist[2] = (float *)c;
+-    _grDrawTriangles(GR_VTX_PTR_ARRAY, 3, vlist);
++    _grDrawTriangles_Default(GR_VTX_PTR_ARRAY, 3, vlist);
+   } else {
+     /* 
+     ** draw a simple triangle 
+--- GlideV2/glide3x/cvg/glide3/src/gpci.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/src/gpci.c	2013-09-23 20:33:53.300359679 +0200
+@@ -221,6 +221,16 @@
+ /* Collection of all of the known procs for a given system */
+ static GrTriSetupProc _triSetupProcs[][2][2] = 
+ {
++#ifdef GLIDE_USE_C_TRISETUP
++  {
++    { NULL, NULL },
++    { NULL, _vptrisetup_cull }
++  },
++  {
++    { NULL, NULL },
++    { NULL, _vptrisetup_cull }
++  }
++#else
+   /* Default Procs */
+   {
+     { _trisetup_Default_Default, _trisetup_Default_cull }, /* GR_WINDOW_COORDS */
+@@ -233,10 +243,20 @@
+     { _trisetup_clip_coor_thunk, _trisetup_clip_coor_thunk }, /* GR_CLIP_COORDS */
+   },
+ #endif /* GL_AMD3D */
++#endif
+ };
+ 
++#ifdef GLIDE_USE_C_TRISETUP
++void FX_CSTYLE
++_grDrawVertexList(FxU32 pktype, FxU32 type, FxI32 mode, FxI32 count, void *pointers);
++#endif
++
+ static GrVertexListProc _vertexListProcs[][2] = {
++#ifdef GLIDE_USE_C_TRISETUP
++  { _grDrawVertexList, _grDrawVertexList },
++#else
+   { _drawvertexlist, _vpdrawvertexlist },
++#endif
+ #if GL_AMD3D
+   { _grDrawVertexList_3DNow_Window, _grDrawVertexList_3DNow_Clip }
+ #endif /* GL_AMD3D */
+@@ -577,7 +597,12 @@
+ 
+   /* Setup the basic proc tables based on the cpu type. */
+   {
+-    _GlideRoot.CPUType = _cpu_detect_asm();
++    _GlideRoot.CPUType =
++#ifdef __i386__
++      _cpu_detect_asm();
++#else
++      0;
++#endif
+     if (GETENV("FX_CPU")) _GlideRoot.CPUType = atoi(GETENV("FX_CPU"));
+ 
+     /* Default case */

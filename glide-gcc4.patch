@@ -327,3 +327,23 @@
            }
          }
  #endif
+--- GlideV2/glide3x/cvg/glide3/src/gstrip.c.orig	2000-04-20 23:26:39.000000000 +0200
++++ GlideV2/glide3x/cvg/glide3/src/gstrip.c	2013-09-21 14:11:46.981730876 +0200
+@@ -248,7 +248,7 @@
+         vPtr = pointers;
+         if (mode)
+           vPtr = *(float **)vPtr;
+-        (float *)pointers += stride;
++        pointers = (float *)pointers + stride;
+         
+         TRI_SETF(FARRAY(vPtr, 0));
+         dataElem = 0;
+@@ -350,7 +350,7 @@
+                  *oow*gc->state.Viewport.hwidth + gc->state.Viewport.ox);
+         TRI_SETF(FARRAY(vPtr, 4)
+                  *oow*gc->state.Viewport.hheight + gc->state.Viewport.oy);
+-        (float *)pointers += stride;
++        pointers = (float *)pointers + stride;
+ 
+         TRI_VP_SETFS(vPtr, oow);
+ #endif
