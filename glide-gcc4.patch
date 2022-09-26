@@ -1,6 +1,6 @@
---- GlideV2/glide2x.orig/cvg/glide/tests/display.c
-+++ GlideV2/glide2x/cvg/glide/tests/display.c
-@@ -65,6 +65,10 @@ static const char *sourceFormatString[] 
+--- GlideV2/glide2x/cvg/glide/tests/display.c.orig	2000-04-20 23:26:36.000000000 +0200
++++ GlideV2/glide2x/cvg/glide/tests/display.c	2022-09-26 18:54:14.561599102 +0200
+@@ -67,6 +67,10 @@ static const char *sourceFormatString[]
      "GR_LFB_SRC_FMT_ZA16      "
  };
  
@@ -9,9 +9,9 @@
 +                          GrLfbSrcFmt_t format,
 +                          FxU32 *bpp );
  
- int main( int argc, char **argv)
- {
-@@ -91,11 +95,6 @@ int main( int argc, char **argv)
+ void main( int argc, char **argv) {
+     char match; 
+@@ -92,11 +96,6 @@ void main( int argc, char **argv) {
      static FxU32 imageWidth;
      static FxU32 imageHeight;
  
@@ -23,9 +23,9 @@
      srcfname[0] = 0;
      dstfname[0] = 0;
  
---- GlideV2/glide2x.orig/cvg/glide/tests/test26.c
-+++ GlideV2/glide2x/cvg/glide/tests/test26.c
-@@ -57,6 +57,10 @@ static const char *sourceFormatString[] 
+--- GlideV2/glide2x/cvg/glide/tests/test26.c.orig	2022-09-26 18:51:04.199297049 +0200
++++ GlideV2/glide2x/cvg/glide/tests/test26.c	2022-09-26 18:55:25.641214031 +0200
+@@ -59,6 +59,10 @@ static const char *sourceFormatString[]
    "GR_LFB_SRC_FMT_ZA16      "
  };
  
@@ -34,9 +34,9 @@
 +                          GrLfbSrcFmt_t format,
 +                          FxU32 *bpp );
  
- int main( int argc, char **argv) {
+ void main( int argc, char **argv) {
    char match; 
-@@ -80,11 +84,6 @@ int main( int argc, char **argv) {
+@@ -82,11 +86,6 @@ void main( int argc, char **argv) {
    static FxU32 imageWidth;
    static FxU32 imageHeight;
  
@@ -46,7 +46,7 @@
 -                            FxU32 *bpp );
 -
    /* Process Command Line Arguments */
-   while( (rv = tlGetOpt( argc, argv, "bdnr", &match, &remArgs )) ) {
+   while( rv = tlGetOpt( argc, argv, "bdnr", &match, &remArgs ) ) {
      if ( rv == -1 ) {
 --- GlideV2/glide3x.orig/cvg/glide3/tests/display.c
 +++ GlideV2/glide3x/cvg/glide3/tests/display.c

@@ -102,6 +102,7 @@ ln glide3x/README README.glide3x
 # Make sure we build for Voodoo2
 export FX_GLIDE_HW=cvg
 %{__make} -j1 V2 \
+	AR="ar csr" \
 	CC="%{__cc}" \
 	CNODEBUG="%{rpmcflags} %{!?debug:-fomit-frame-pointer -funroll-loops} \
 		%{!?debug:-fexpensive-optimizations -ffast-math -DBIG_OPT}" \

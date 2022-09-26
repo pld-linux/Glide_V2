@@ -9,9 +9,9 @@
  } /* tlErrorMessage */
  
  #else
---- GlideV2/glide3x/cvg/glide3/tests/tlib.c.orig	2000-04-20 23:26:36.000000000 +0200
-+++ GlideV2/glide3x/cvg/glide3/tests/tlib.c	2013-09-21 07:44:29.182138177 +0200
-@@ -1433,7 +1433,7 @@
+--- GlideV2/glide3x/cvg/glide3/tests/tlib.c.orig	2022-09-26 19:01:38.655859903 +0200
++++ GlideV2/glide3x/cvg/glide3/tests/tlib.c	2022-09-26 19:02:06.205710653 +0200
+@@ -1540,7 +1540,7 @@ char tlGetCH( void ) {
  
  FxBool
  tlErrorMessage( char *err) {
@@ -19,7 +19,7 @@
 +  fputs(err, stderr);
  } /* tlErrorMessage */
  
- #else
+ FxU32
 --- GlideV2/swlibs/fxmisc/fximg.c.orig	2000-04-20 23:26:42.000000000 +0200
 +++ GlideV2/swlibs/fxmisc/fximg.c	2013-09-21 08:00:09.335790777 +0200
 @@ -1879,8 +1879,8 @@

@@ -1,6 +1,6 @@
---- GlideV2/glide2x/cvg/init/sst1init.h.orig	2013-09-21 07:41:42.484397830 +0200
-+++ GlideV2/glide2x/cvg/init/sst1init.h	2013-09-21 07:46:29.837739823 +0200
-@@ -163,4 +163,16 @@
+--- GlideV2/glide2x/cvg/init/sst1init.h.orig	2022-09-26 18:55:51.354408063 +0200
++++ GlideV2/glide2x/cvg/init/sst1init.h	2022-09-26 19:00:30.416229589 +0200
+@@ -163,6 +163,18 @@ p6Fence(void);
  #elif defined (__GNUC__) && defined(__i386__)
  #  define P6FENCE asm("xchg %%eax,%0" : /*outputs*/ : "m" (p6FenceVar) : \
  					"eax");
@@ -17,6 +17,8 @@
 +#elif defined(__sparc__)
 +# define P6FENCE asm volatile("" ::: "memory");
  #else
+ #  error "P6 Fencing in-line assembler code needs to be added for this compiler"
+ #endif  
 --- GlideV2/glide2x/cvg/glide/src/cpudetect.c.orig	2000-04-20 23:26:36.000000000 +0200
 +++ GlideV2/glide2x/cvg/glide/src/cpudetect.c	2013-09-21 08:28:32.804847399 +0200
 @@ -34,14 +34,25 @@
@@ -55,9 +57,9 @@
 -CFLAGS = -g $(GCFLAGS) $(LCFLAGS) $(VCFLAGS)
 +CFLAGS = -g $(GCFLAGS) $(LCFLAGS) $(VCFLAGS) -fPIC
  endif
---- GlideV2/glide3x/cvg/init/sst1init.h.orig	2013-09-21 07:41:42.484397830 +0200
-+++ GlideV2/glide3x/cvg/init/sst1init.h	2013-09-21 07:46:29.837739823 +0200
-@@ -163,4 +163,16 @@
+--- GlideV2/glide3x/cvg/init/sst1init.h.orig	2022-09-26 18:55:51.354408063 +0200
++++ GlideV2/glide3x/cvg/init/sst1init.h	2022-09-26 19:00:56.486088357 +0200
+@@ -163,6 +163,18 @@ p6Fence(void);
  #elif defined (__GNUC__) && defined(__i386__)
  #  define P6FENCE asm("xchg %%eax,%0" : /*outputs*/ : "m" (p6FenceVar) : \
  					"eax");
@@ -74,6 +76,8 @@
 +#elif defined(__sparc__)
 +# define P6FENCE asm volatile("" ::: "memory");
  #else
+ #  error "P6 Fencing in-line assembler code needs to be added for this compiler"
+ #endif  
 --- GlideV2/glide3x/cvg/glide3/src/makefile.linux.orig	2000-04-20 23:26:39.000000000 +0200
 +++ GlideV2/glide3x/cvg/glide3/src/makefile.linux	2013-09-21 14:30:15.403246286 +0200
 @@ -144,7 +144,7 @@
